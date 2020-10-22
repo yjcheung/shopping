@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../service/service_method.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'dart:convert';
 
 class HomePage extends StatefulWidget{
   _HomePageState createState() => _HomePageState();
@@ -25,9 +26,21 @@ class _HomePageState extends State<HomePage>{
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(title: Text('百姓生活+'),),
-      body: SingleChildScrollView(
-        child: Text(homePageContent),
-      ),
+      body: FutureBuilder(future:getHomePageContent() ,builder: (context , snapshot){
+        if(snapshot.hasData){
+          var data = json.decode(snapshot.data.toString());
+          List<Map> swiper = (data['data']['slides'] as List ).cast();
+          return Column(
+            children: <Widget>[
+              SwiperDiy(swiperDataList: swiper,)
+            ],
+          );
+        }else {
+          return Center(
+            child: Text('加载中...'),
+          );
+        }
+      },),
     );
   }
 }
